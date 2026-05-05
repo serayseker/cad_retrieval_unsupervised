@@ -1,103 +1,105 @@
-# CAD Model Retrieval via Unsupervised Graph Learning
+# Unsupervised clustering of industrial CAD models for design retrieval from database <img width="300" height="21" alt="image" src="https://github.com/user-attachments/assets/8e4bee28-a08e-4fad-9970-6b8254320b15" />
 
-[![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
-[![PyTorch Geometric](https://img.shields.io/badge/PyG-2.3+-red.svg)](https://pytorch-geometric.readthedocs.io/en/latest/)
-[![pythonocc-core](https://img.shields.io/badge/pythonocc--core-7.7-green.svg)](https://github.com/tpaviot/pythonocc-core)
 
-## 📌 Project Overview
-This project presents an end-to-end prototype for **3D CAD Model Retrieval** using unsupervised graph machine learning. Developed as part of the **Software Lab 2026** at the Technical University of Munich (TUM), this pipeline processes boundary representation (B-Rep) CAD data from `.step` files, converts them into Attributed Adjacency Graphs (AAG), and extracts high-dimensional geometric embeddings to find and cluster geometrically similar models.
 
-### Key Objectives:
-1. **Robust B-Rep Parsing:** Convert raw STEP files to PyTorch Geometric (PyG) graphs using `pythonocc-core`.
-2. **Unsupervised Learning:** Train a Graph Neural Network (GNN) without labeled data to generate geometric embeddings.
-3. **Fast Similarity Search:** Implement a vector database for millisecond-level retrieval.
-4. **Interactive UI:** Provide a lightweight web interface for end-users.
+# Project Structure
+
+This repository is organized to support the development of an unsupervised pipeline for CAD model retrieval. The structure separates data handling, core implementation, experimentation, and documentation to ensure clarity and scalability.
+
+<img width="695" height="400" alt="image" src="https://github.com/user-attachments/assets/7377eeb1-3f12-46e2-b87c-cac68cd4e297" />
+
 
 ---
 
-## 📂 Repository Structure
-```text
-cad_retrieval_project/
-│
-├── data/                      # Data storage (Ignored by Git)
-│   ├── raw_step/              # Place original .step/.stp files here
-│   └── processed_graphs/      # Generated PyG .pt files
-│
-├── checkpoints/               # Trained model weights and vector indices
-│   ├── [TODO] gae_weights.pth 
-│   └── [TODO] faiss_index.bin 
-│
-├── src/                       # Core backend logic
-│   ├── __init__.py
-│   ├── data_converter.py      # Multiprocessing STEP-to-Graph converter
-│   ├── dataset.py             # PyG Dataset loader with ID tracking
-│   ├── [TODO] networks.py           # GNN / Encoder architecture
-│   ├── [TODO] train_unsupervised.py # Training loop and loss functions
-│   └── [TODO] retrieval.py          # FAISS vector database builder
-│
-├── notebooks/                 # Exploratory data analysis & Ablation studies
-│   └── [TODO] ablation_study.ipynb  
-│
-├── [TODO] app.py              # Web Interface (Streamlit/Gradio)
-├── requirements.txt           # Dependency list
-└── README.md                  # Project documentation
-```
+## Root Directory
+
+Main project directory containing all source code, data references, experiments, and documentation.
 
 ---
 
-## ⚙️ Installation & Requirements
+## Data
 
-Ensure you have a working Python environment (Conda is highly recommended for `pythonocc-core` and `PyTorch` compatibility).
-```bash
-# Example Conda Environment Setup
-conda create -n cad_retrieval python=3.12 -y
-conda activate cad_retrieval
+- **raw/**  
+  Contains original CAD datasets (e.g., STEP files) as obtained from external sources.  
+  These files should remain unchanged.
 
-# Install core engineering and ML libraries
-conda install -c conda-forge pythonocc-core
-conda install pytorch torchvision torchaudio pytorch-cuda=12.6 -c pytorch -c nvidia
-pip install torch_geometric tqdm faiss-cpu streamlit
-```
-*(A complete `requirements.txt` will be provided upon project completion).*
+- **processed/**  
+  Stores transformed data such as graph representations derived from CAD models.  
+  Includes intermediate outputs used for training and evaluation.
+
+- **subsets/**  
+  Smaller or filtered portions of the dataset used for debugging, rapid prototyping, or controlled experiments.
 
 ---
 
-## 🚀 Pipeline & Usage
+## Source Code
 
-### Step 1: Data Preprocessing (Completed)
-Place your raw CAD models inside `data/raw_step/`. The data converter uses parallel processing to parse topological and geometric features (faces, edges, curves, areas) into PyG `.pt` files.
-```bash
-python src/data_converter.py --input data/raw_step --output data/processed_graphs
-```
+- **cad_io/**  
+  Handles input/output operations for CAD data.  
+  Includes parsing of STEP files (e.g., via PythonOCC) and basic geometry extraction.
 
-### Step 2: Unsupervised Model Training (WIP)
-Load the processed graphs using `src/dataset.py` and train the graph embedding model.
-```bash
-# [TODO: Implementation pending]
-# python src/train_unsupervised.py --epochs 100 --batch_size 32
-```
+- **graph_conversion/**  
+  Converts CAD representations (e.g., B-Rep) into graph structures.  
+  Defines nodes (faces, edges, vertices) and their relationships.
 
-### Step 3: Build Vector Database (WIP)
-Pass all training CAD models through the trained encoder to generate embeddings, and build a local similarity index.
-```bash
-# [TODO: Implementation pending]
-# python src/retrieval.py --build_index
-```
+- **models/**  
+  Contains implementations of machine learning models, primarily Graph Neural Networks (GNNs) or embedding models.
 
-### Step 4: Web Application (WIP)
-Launch the interactive tool to upload new STEP files and retrieve similar existing models.
-```bash
-# [TODO: Implementation pending]
-# streamlit run app.py
-```
+- **unsupervised/**  
+  Implements unsupervised learning approaches such as contrastive learning, clustering, or embedding-based retrieval.
+
+- **utils/**  
+  Utility functions shared across modules (e.g., logging, visualization, helper functions).
 
 ---
 
-## 👥 Team
-**Software Lab 2026 - Group Project**
-* Di Liu 
-* Ayse Seray Seker
-* Eduardo Dall'Igna
+## Experiments
 
-## 🎓 Acknowledgements
-This project is developed under the guidance of Dr. Stavros Nousias and the Technical University of Munich (TUM). 
+- **configs/**  
+  Configuration files defining experiment parameters (e.g., model settings, training hyperparameters).
+
+- **results/**  
+  Stores outputs from experiments such as trained embeddings, metrics, and logs.
+
+- **analysis/**  
+  Contains scripts and notebooks for evaluating results, performing ablation studies, and generating plots.
+
+---
+
+## Interface
+
+Provides a lightweight user interface for:
+- Uploading a CAD model
+- Retrieving similar models from the database
+
+This can be implemented as a simple script, web app, or minimal GUI.
+
+---
+
+## Documentation
+
+Contains:
+- Literature review
+- Methodology notes
+- Project reports
+- Diagrams and design decisions
+
+---
+
+## Other Files
+
+- **README.md**  
+  Overview of the project, setup instructions, and structure (this file).
+
+- **requirements.txt**  
+  List of Python dependencies required to run the project.
+
+---
+
+## Notes
+
+- Each module is designed to be modular and independently testable.
+- The structure supports iterative experimentation and extension over two semesters.
+
+<img width="1276" height="717" alt="image" src="https://github.com/user-attachments/assets/0037ba66-19c0-416d-901f-3a67c9519e24" />
+
